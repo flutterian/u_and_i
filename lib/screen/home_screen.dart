@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  DateTime firstDay = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -13,15 +20,26 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [_DDay(), _CoupleImage()],
+          children: [
+            _DDay(onHeartPressed: onHeartPressed),
+            _CoupleImage(),
+          ],
         ),
       ),
     );
   }
 }
 
+void onHeartPressed() {
+  print('클릭!!');
+}
+
 // 이름 첫글자가 언더스코어이면 다른 파일에서 접근 불가
 class _DDay extends StatelessWidget {
+  final GestureTapCallback onHeartPressed;
+
+  const _DDay({required this.onHeartPressed});
+
   @override
   Widget build(BuildContext context) {
     // 테마 불러오기
@@ -39,7 +57,7 @@ class _DDay extends StatelessWidget {
         const SizedBox(height: 16.0),
         IconButton(
           iconSize: 60.0,
-          onPressed: () {},
+          onPressed: onHeartPressed,
           icon: Icon(
             Icons.favorite,
             color: Colors.red,
