@@ -1,3 +1,5 @@
+// 쿠퍼티노 (IOS) 위젯 사용하기 위해 필요
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,9 +13,15 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime firstDay = DateTime.now();
 
   void onHeartPressed() {
-    setState(() {
-      firstDay = firstDay.subtract(Duration(days: 1));
-    });
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoDatePicker(
+          mode: CupertinoDatePickerMode.date,
+          onDateTimeChanged: (DateTime date) {},
+        );
+      },
+    );
   }
 
   @override
