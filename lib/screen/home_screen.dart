@@ -16,12 +16,20 @@ class _HomeScreenState extends State<HomeScreen> {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
+        // today를 날짜 단위(00:00:00)로 내림해 전달해야 날짜 피커의 최대 날짜가 명확히 오늘로 제한됨.
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
+        // firstDay가 today보다 크면 today로 바꿔줌
+        final initial = firstDay.isAfter(today) ? today : firstDay;
         return Align(
           alignment: Alignment.bottomCenter,
           child: Container(
             color: Colors.white,
             height: 300,
             child: CupertinoDatePicker(
+              // initialDateTime은 maximumDate(오늘)보다 클 수 없으므로 보정. 크면 실제로 Exception에 잡혀버림.
+              initialDateTime: initial,
+              maximumDate: today,
               mode: CupertinoDatePickerMode.date,
               onDateTimeChanged: (DateTime date) {
                 setState(() {
