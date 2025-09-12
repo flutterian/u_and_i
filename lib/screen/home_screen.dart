@@ -10,6 +10,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   DateTime firstDay = DateTime.now();
 
+  void onHeartPressed() {
+    setState(() {
+      firstDay = firstDay.subtract(Duration(days: 1));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _DDay(onHeartPressed: onHeartPressed),
+            _DDay(onHeartPressed: onHeartPressed, firstDay: firstDay),
             _CoupleImage(),
           ],
         ),
@@ -30,15 +36,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-void onHeartPressed() {
-  print('클릭!!');
-}
-
 // 이름 첫글자가 언더스코어이면 다른 파일에서 접근 불가
 class _DDay extends StatelessWidget {
   final GestureTapCallback onHeartPressed;
+  final DateTime firstDay;
 
-  const _DDay({required this.onHeartPressed});
+  const _DDay({required this.onHeartPressed, required this.firstDay});
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +49,7 @@ class _DDay extends StatelessWidget {
     final textTheme = Theme.of(
       context,
     ).textTheme; // 위젯 트리 위 가장 가까운 Theme 값을 가져온다.
+    final now = DateTime.now();
 
     return Column(
       children: [
@@ -53,7 +57,10 @@ class _DDay extends StatelessWidget {
         Text('U&I', style: textTheme.displayLarge),
         const SizedBox(height: 16.0),
         Text('우리 처음 만난 날', style: textTheme.bodyLarge),
-        Text('2013.03.22', style: textTheme.bodyMedium), // 임시로 하드 코딩
+        Text(
+          '${firstDay.year}.${firstDay.month}.${firstDay.day}',
+          style: textTheme.bodyMedium,
+        ),
         const SizedBox(height: 16.0),
         IconButton(
           iconSize: 60.0,
@@ -64,7 +71,10 @@ class _DDay extends StatelessWidget {
           ), // Icon의 경우 색상이 각각 다른 경우가 많아서 직접 지정
         ),
         const SizedBox(height: 16.0),
-        Text('D+4555', style: textTheme.displayMedium),
+        Text(
+          'D+${DateTime(now.year, now.month, now.day).difference(firstDay).inDays + 1}',
+          style: textTheme.displayMedium,
+        ),
       ],
     );
   }
