@@ -1,6 +1,7 @@
 // 쿠퍼티노 (IOS) 위젯 사용하기 위해 필요
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:u_and_i/data/first_day_storage.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,7 +11,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  DateTime firstDay = DateTime.now();
+  DateTime? _firstDay;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFirstDay();
+  }
+
+  Future<void> _loadFirstDay() async {
+    final saved = await FirstDayStorage.load();
+    setState(() {
+      _firstDay = saved ?? DateTime.now();
+    });
+  }
+
+  Future<void> _onFirstDayChanged(DateTime newDay) async {
+    setState(() => _firstDay = DateTime(newDay.year, newDay.month, newDay.day));
+    await FirstDayStorage.save(_firstDay!); // 절대 null 이 아니라는 표시로 뒤에 ! 붙여줌
+  }
 
   void onHeartPressed() {
     showCupertinoDialog(
@@ -20,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final now = DateTime.now();
         final today = DateTime(now.year, now.month, now.day);
         // firstDay가 today보다 크면 today로 바꿔줌
-        final initial = firstDay.isAfter(today) ? today : firstDay;
+        final initial = _firstDay!.isAfter(today) ? today : _firstDay;
         return Align(
           alignment: Alignment.bottomCenter,
           child: Container(
@@ -32,9 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
               maximumDate: today,
               mode: CupertinoDatePickerMode.date,
               onDateTimeChanged: (DateTime date) {
-                setState(() {
-                  firstDay = date;
-                });
+                _onFirstDayChanged(date);
               },
             ),
           ),
@@ -55,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _DDay(onHeartPressed: onHeartPressed, firstDay: firstDay),
+            _DDay(onHeartPressed: onHeartPressed, firstDay: _firstDay!),
             _CoupleImage(),
           ],
         ),
